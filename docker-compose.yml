@@ -1,0 +1,30 @@
+services:
+  dockercompose:
+    build:
+        context: ./dockercompose
+        dockerfile: Dockerfile
+    ports: 
+        - "8080:8080"
+        - "8081:8081"
+    networks: 
+        - productnetwork
+    restart: on-failure
+    depends_on: 
+        - sqlserver
+    environment:
+        - "Server=SqlServer,1433;Database=User;User Id=SA;Password=Password12345!;TrustServerCertificate=True;"
+    
+
+  sqlserver:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    environment:
+      - ACCEPT_EULA=Y
+      - SA_PASSWORD="Password12345!"
+    ports:
+        - "1433:1433"
+    networks:
+        - productnetwork
+
+networks:
+  productnetwork:
+    driver: bridge
